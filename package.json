@@ -3,21 +3,37 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "format-all": "prettier --write '**/*.{js,jsx,ts,tsx}'",
+    "lint": "eslint"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.2",
+    "@hookform/resolvers": "^3.10.0",
     "expo": "~52.0.25",
+    "expo-sqlite": "~15.0.6",
     "expo-status-bar": "~2.0.1",
+    "fp-ts": "^2.16.9",
+    "io-ts": "^2.2.22",
+    "io-ts-types": "^0.5.19",
     "react": "18.3.1",
-    "react-native": "0.76.6"
+    "react-hook-form": "^7.54.2",
+    "react-native": "0.76.6",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@eslint/js": "^9.18.0",
     "@types/react": "~18.3.12",
-    "typescript": "^5.3.3"
+    "eslint": "^9.18.0",
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.20.0"
   },
   "private": true
 }
