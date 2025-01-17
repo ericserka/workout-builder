@@ -15,21 +15,16 @@ import * as TE from "fp-ts/TaskEither"
 import * as A from "fp-ts/Array"
 import { Alert } from "react-native"
 import { useStore } from "@/app/helpers/store"
-import { DomainError } from "@/lib/types/errors"
 import { create } from "zustand"
-
-type Loading = {
-  create: boolean
-  list: boolean
-  update: boolean
-  delete: boolean
-}
+import { type PositiveInt } from "@/lib/types/branded/number"
+import { alertDomainError } from "@/app/helpers/alert"
+import { Loading } from "@/app/types"
 
 interface UseWorkoutPlansDb {
   create: (db: SQLiteDatabase, input: CreateWorkoutPlanInput) => void
   update: (db: SQLiteDatabase, input: UpdateWorkoutPlanInput) => void
   list: (db: SQLiteDatabase) => void
-  remove: (db: SQLiteDatabase, id: number) => void
+  remove: (db: SQLiteDatabase, id: PositiveInt) => void
   loading: Loading
   active: WorkoutPlan[]
   inactive: WorkoutPlan[]
@@ -39,21 +34,13 @@ interface UseWorkoutPlansDb {
 export const useWorkoutPlansDb = create<UseWorkoutPlansDb>(set => {
   const { navigate } = useStore.getState()
 
-  const toggleCreateLoading = () =>
+  const toggleQueryLoading = () =>
     set(state => ({
-      loading: { ...state.loading, create: !state.loading.create }
+      loading: { ...state.loading, query: !state.loading.query }
     }))
-  const toggleListLoading = () =>
+  const toggleMutationLoading = () =>
     set(state => ({
-      loading: { ...state.loading, list: !state.loading.list }
-    }))
-  const toggleUpdateLoading = () =>
-    set(state => ({
-      loading: { ...state.loading, update: !state.loading.update }
-    }))
-  const toggleDeleteLoading = () =>
-    set(state => ({
-      loading: { ...state.loading, delete: !state.loading.delete }
+      loading: { ...state.loading, mutation: !state.loading.mutation }
     }))
 
   const updateActive = () =>
@@ -71,7 +58,7 @@ export const useWorkoutPlansDb = create<UseWorkoutPlansDb>(set => {
       )
     }))
 
-  const deleteIdFromStore = (id: number) =>
+  const deleteIdFromStore = (id: PositiveInt) =>
     set(state => ({
       all: pipe(
         state.all,
@@ -79,21 +66,16 @@ export const useWorkoutPlansDb = create<UseWorkoutPlansDb>(set => {
       )
     }))
 
-  const alertDomainError = (error: DomainError) =>
-    Alert.alert(error.type, error.message)
-
   return {
     loading: {
-      create: false,
-      list: false,
-      update: false,
-      delete: false
+      query: false,
+      mutation: false
     },
     active: [],
     inactive: [],
     all: [],
     create: (db, input) => {
-      toggleCreateLoading()
+      toggleMutationLoading()
 
       pipe(
         input,
@@ -101,18 +83,18 @@ export const useWorkoutPlansDb = create<UseWorkoutPlansDb>(set => {
         TE.match(
           error => {
             alertDomainError(error)
-            toggleCreateLoading()
+            toggleMutationLoading()
           },
           () => {
             Alert.alert("New workout plan created!")
-            toggleCreateLoading()
+            toggleMutationLoading()
             navigate("workoutPlans")
           }
         )
       )()
     },
     update: (db, input) => {
-      toggleUpdateLoading()
+      toggleMutationLoading()
 
       pipe(
         input,
@@ -120,18 +102,18 @@ export const useWorkoutPlansDb = create<UseWorkoutPlansDb>(set => {
         TE.match(
           error => {
             alertDomainError(error)
-            toggleUpdateLoading()
+            toggleMutationLoading()
           },
           () => {
             Alert.alert("Workout plan updated!")
-            toggleUpdateLoading()
+            toggleMutationLoading()
             navigate("workoutPlans")
           }
         )
       )()
     },
     list: db => {
-      toggleListLoading()
+      toggleQueryLoading()
 
       pipe(
         db,
@@ -139,19 +121,19 @@ export const useWorkoutPlansDb = create<UseWorkoutPlansDb>(set => {
         TE.match(
           error => {
             alertDomainError(error)
-            toggleListLoading()
+            toggleQueryLoading()
           },
           workoutPlans => {
             set({ all: workoutPlans })
             updateActive()
             updateInactive()
-            toggleListLoading()
+            toggleQueryLoading()
           }
         )
       )()
     },
     remove: (db, id) => {
-      toggleDeleteLoading()
+      toggleMutationLoading()
 
       pipe(
         id,
@@ -159,14 +141,14 @@ export const useWorkoutPlansDb = create<UseWorkoutPlansDb>(set => {
         TE.match(
           error => {
             alertDomainError(error)
-            toggleDeleteLoading()
+            toggleMutationLoading()
           },
           () => {
             deleteIdFromStore(id)
             updateActive()
             updateInactive()
             Alert.alert("Workout plan deleted!")
-            toggleDeleteLoading()
+            toggleMutationLoading()
           }
         )
       )()
