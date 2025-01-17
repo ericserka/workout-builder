@@ -15,13 +15,15 @@ import {
   generateInsertQuery,
   generateUpdateQuery,
   runAsync,
-  handleNotFoundFromResult
+  handleNotFoundFromResult,
+  generateDeleteQuery
 } from "@/lib/db/helpers/query"
 import { DomainError } from "@/lib/types/errors"
+import { type PositiveInt } from "@/lib/types/branded/number"
 
 const WORKOUT_PLANS_TABLE = "workout_plans"
 
-const notFoundErrorMessage = (id: number) =>
+const notFoundErrorMessage = (id: PositiveInt) =>
   `Workout plan with id ${id} not found`
 
 type CreateWorkoutPlan = (
@@ -55,11 +57,12 @@ export const updateWorkoutPlan: UpdateWorkoutPlan = db => input =>
 
 type DeleteWorkoutPlan = (
   db: SQLiteDatabase
-) => (id: number) => TE.TaskEither<DomainError, SQLiteRunResult>
+) => (id: PositiveInt) => TE.TaskEither<DomainError, SQLiteRunResult>
 export const deleteWorkoutPlan: DeleteWorkoutPlan = db => id =>
   pipe(
-    db.runAsync(`DELETE FROM ${WORKOUT_PLANS_TABLE} WHERE id = ?`, [id]),
-    tryCatch,
+    { table: WORKOUT_PLANS_TABLE, where: { id } },
+    generateDeleteQuery,
+    runAsync(db),
     handleNotFoundFromResult(notFoundErrorMessage(id))
   )
 
@@ -85,7 +88,7 @@ export const listWorkoutPlans: ListWorkoutPlans = db =>
 
 type FindWorkoutPlanById = (
   db: SQLiteDatabase
-) => (id: number) => TE.TaskEither<DomainError, WorkoutPlan>
+) => (id: PositiveInt) => TE.TaskEither<DomainError, WorkoutPlan>
 export const findWorkoutPlanById: FindWorkoutPlanById = db => id =>
   pipe(
     db.getFirstAsync<WorkoutPlanRow>(
