@@ -76,7 +76,7 @@ export const listWorkoutPlanWorkouts: ListWorkoutPlanWorkouts =
   db => workoutPlanId =>
     pipe(
       db.getAllAsync<WorkoutRow>(
-        `SELECT * FROM ${WORKOUTS_TABLE} WHERE workout_plan_id = ? ORDER BY id DESC`,
+        `SELECT * FROM ${WORKOUTS_TABLE} WHERE workout_plan_id = ? ORDER BY id ASC`,
         [workoutPlanId]
       ),
       tryCatch,
