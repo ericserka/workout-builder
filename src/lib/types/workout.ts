@@ -1,6 +1,6 @@
 import * as t from "io-ts"
-import * as tt from "io-ts-types"
 import { PositiveInt } from "@/lib/types/branded/number"
+import { FriendlyNonEmptyString } from "@/lib/types/branded/string"
 
 // Codecs
 
@@ -17,13 +17,13 @@ export const WorkoutRowCodec = t.type({
 })
 
 export const CreateWorkoutCodec = t.type({
-  name: tt.NonEmptyString,
+  name: FriendlyNonEmptyString,
   workoutPlanId: PositiveInt
 })
 
 export const UpdateWorkoutCodec = t.type({
   id: PositiveInt,
-  name: t.union([tt.NonEmptyString, t.undefined])
+  name: t.union([FriendlyNonEmptyString, t.undefined])
 })
 
 // Types

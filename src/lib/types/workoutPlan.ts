@@ -1,6 +1,7 @@
 import * as t from "io-ts"
 import * as tt from "io-ts-types"
 import { Binary, PositiveInt } from "@/lib/types/branded/number"
+import { FriendlyNonEmptyString } from "@/lib/types/branded/string"
 
 // Codecs
 
@@ -19,13 +20,13 @@ export const WorkoutPlanRowCodec = t.type({
 })
 
 export const CreateWorkoutPlanCodec = t.type({
-  name: tt.NonEmptyString,
+  name: FriendlyNonEmptyString,
   description: t.union([t.string, t.undefined])
 })
 
 export const UpdateWorkoutPlanCodec = t.type({
   id: PositiveInt,
-  name: t.union([tt.NonEmptyString, t.undefined]),
+  name: t.union([FriendlyNonEmptyString, t.undefined]),
   description: t.union([t.string, t.undefined]),
   isActive: t.union([t.boolean, t.undefined])
 })
