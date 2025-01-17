@@ -7,14 +7,14 @@ import { FriendlyNonEmptyString } from "@/lib/types/branded/string"
 
 export const WorkoutPlanCodec = t.type({
   id: PositiveInt,
-  name: t.string,
+  name: FriendlyNonEmptyString,
   description: t.union([t.string, t.null]),
   isActive: tt.BooleanFromNumber
 })
 
 export const WorkoutPlanRowCodec = t.type({
   id: PositiveInt,
-  name: t.string,
+  name: FriendlyNonEmptyString,
   description: t.union([t.string, t.null]),
   is_active: Binary
 })

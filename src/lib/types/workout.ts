@@ -6,13 +6,13 @@ import { FriendlyNonEmptyString } from "@/lib/types/branded/string"
 
 export const WorkoutCodec = t.type({
   id: PositiveInt,
-  name: t.string,
+  name: FriendlyNonEmptyString,
   workoutPlanId: PositiveInt
 })
 
 export const WorkoutRowCodec = t.type({
   id: PositiveInt,
-  name: t.string,
+  name: FriendlyNonEmptyString,
   workout_plan_id: PositiveInt
 })
 
