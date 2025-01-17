@@ -1,20 +1,21 @@
 import * as t from "io-ts"
 import * as tt from "io-ts-types"
+import { Binary, PositiveInt } from "@/lib/types/branded/number"
 
 // Codecs
 
 export const WorkoutPlanCodec = t.type({
-  id: t.number,
+  id: PositiveInt,
   name: t.string,
   description: t.union([t.string, t.null]),
   isActive: tt.BooleanFromNumber
 })
 
 export const WorkoutPlanRowCodec = t.type({
-  id: t.number,
+  id: PositiveInt,
   name: t.string,
   description: t.union([t.string, t.null]),
-  is_active: t.number
+  is_active: Binary
 })
 
 export const CreateWorkoutPlanCodec = t.type({
@@ -23,7 +24,7 @@ export const CreateWorkoutPlanCodec = t.type({
 })
 
 export const UpdateWorkoutPlanCodec = t.type({
-  id: t.number,
+  id: PositiveInt,
   name: t.union([tt.NonEmptyString, t.undefined]),
   description: t.union([t.string, t.undefined]),
   isActive: t.union([t.boolean, t.undefined])
