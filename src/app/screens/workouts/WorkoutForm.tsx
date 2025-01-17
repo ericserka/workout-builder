@@ -54,8 +54,7 @@ export const WorkoutForm = () => {
             id: w.id,
             name: w.name
           },
-          onSubmit: (data: FormType) =>
-            update(db, data as UpdateWorkoutInput),
+          onSubmit: (data: FormType) => update(db, data as UpdateWorkoutInput),
           title: `Update Workout ${w.name} for ${wp.name}`
         })
       )
@@ -103,7 +102,6 @@ export const WorkoutForm = () => {
   const onSome = (wp: WorkoutPlan) => <Form wp={wp} />
 
   return pipe(workoutPlan, O.match(onNone, onSome))
-
 }
 
 const styles = StyleSheet.create({

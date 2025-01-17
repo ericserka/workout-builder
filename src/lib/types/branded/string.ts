@@ -3,7 +3,10 @@ import * as t from "io-ts"
 
 // Codecs
 
-export const FriendlyNonEmptyString = tt.withMessage(tt.NonEmptyString, () => "Required")
+export const FriendlyNonEmptyString = tt.withMessage(
+  tt.NonEmptyString,
+  () => "Required"
+)
 
 // Types
 
