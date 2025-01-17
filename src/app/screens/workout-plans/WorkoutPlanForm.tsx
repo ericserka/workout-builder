@@ -15,6 +15,7 @@ import { useWorkoutPlansDb } from "@/app/hooks/useWorkoutPlansDb"
 import { useSQLiteContext } from "expo-sqlite"
 import { ControlledSwitchInput } from "@/app/components/ControlledSwitchInput"
 import { pipe } from "fp-ts/function"
+import { FormProps } from "@/app/types"
 
 export const WorkoutPlanForm = () => {
   const { workoutPlan } = useStore()
@@ -30,7 +31,7 @@ export const WorkoutPlanForm = () => {
     : CreateWorkoutPlanInput
   type FormType = Form<typeof isUpdate>
 
-  const formProps = pipe(
+  const formProps: FormProps<FormType> = pipe(
     workoutPlan,
     O.match(
       () => ({
