@@ -124,3 +124,25 @@ export const generateUpdateQuery: GenerateUpdateQuery = input =>
       )
     )
   )
+
+interface GenerateDeleteQueryInput {
+  table: string
+  where: Record<string, SQLiteBindValue>
+}
+type GenerateDeleteQuery = (
+  input: GenerateDeleteQueryInput
+) => O.Option<[string, SQLiteBindValue[]]>
+export const generateDeleteQuery: GenerateDeleteQuery = input =>
+  pipe(input.where, removeNullablesAndUnzip, ([columns, params]) =>
+    noneIfCondition(
+      A.isEmpty(columns),
+      O.some([
+        `DELETE FROM ${input.table} WHERE ${pipe(
+          columns,
+          A.map(col => `${col} = ?`),
+          ArrayHelpers.join(" AND ")
+        )}`,
+        params
+      ])
+    )
+  )
