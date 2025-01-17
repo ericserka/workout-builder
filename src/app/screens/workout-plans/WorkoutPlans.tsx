@@ -1,18 +1,12 @@
-import {
-  Text,
-  View,
-  Pressable,
-  StyleSheet,
-  FlatList,
-  ActivityIndicator,
-  Alert
-} from "react-native"
+import { Text, View, StyleSheet, ActivityIndicator } from "react-native"
 import { useWorkoutPlansDb } from "@/app/hooks/useWorkoutPlansDb"
 import { useStore } from "@/app/helpers/store"
 import { useEffect, useState } from "react"
 import { useSQLiteContext } from "expo-sqlite"
 import { WorkoutPlan } from "@/lib/types/workoutPlan"
 import { CustomButton } from "@/app/components/CustomButton"
+import { onDelete } from "@/app/helpers/alert"
+import { FlatListOfCards } from "@/app/components/FlatListOfCards"
 
 export const WorkoutPlans = () => {
   const { list, loading, active, remove, inactive } = useWorkoutPlansDb()
@@ -24,64 +18,32 @@ export const WorkoutPlans = () => {
     list(db)
   }, [])
 
-  const onDelete = (id: number) => {
-    Alert.alert("Delete Workout Plan", "Are you sure?", [
-      {
-        text: "Cancel",
-        style: "cancel"
-      },
-      {
-        text: "Delete",
-        onPress: () => remove(db, id),
-        style: "default"
-      }
-    ])
-  }
-
   const toggleShowInactive = () => {
     setShowInactive(prev => !prev)
   }
 
   const WorkoutPlanFlatList = ({ data }: { data: WorkoutPlan[] }) => (
-    <FlatList
-      style={{ height: "80%" }}
+    <FlatListOfCards
       data={data}
       keyExtractor={item => item.id.toString()}
-      renderItem={({ item }) => (
-        <Pressable
-          style={styles.workoutPlan}
-          onPress={() => {
-            setWorkoutPlan(item)
-            navigate("workoutPlan")
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <Text style={styles.workoutPlanName}>{item.name}</Text>
-            <Text>{item.description}</Text>
-          </View>
-
-          <CustomButton
-            title="Edit"
-            disabled={loading.delete}
-            onPress={() => {
-              setWorkoutPlan(item)
-              navigate("workoutPlanForm")
-            }}
-          />
-
-          <CustomButton
-            title="Delete"
-            disabled={loading.delete}
-            onPress={() => onDelete(item.id)}
-            backgroundColor="red"
-          />
-        </Pressable>
-      )}
-      contentContainerStyle={{ gap: 12 }}
+      title={item => item.name}
+      subtitle={item => item.description}
+      actionsDisabled={loading.mutation}
+      onCardPress={item => {
+        setWorkoutPlan(item)
+        navigate("workoutPlanWorkouts")
+      }}
+      onDeletePress={item => {
+        onDelete("Delete Workout Plan", () => remove(db, item.id))
+      }}
+      onEditPress={item => {
+        setWorkoutPlan(item)
+        navigate("workoutPlanForm")
+      }}
     />
   )
 
-  if (loading.list) {
+  if (loading.query) {
     return <ActivityIndicator size="large" />
   }
 
@@ -89,7 +51,7 @@ export const WorkoutPlans = () => {
     <View>
       <CustomButton
         title={"Create new workout plan"}
-        disabled={loading.delete}
+        disabled={loading.mutation}
         onPress={() => {
           clearWorkoutPlan()
           navigate("workoutPlanForm")
@@ -99,8 +61,8 @@ export const WorkoutPlans = () => {
       <View style={styles.showInactiveBtn}>
         <CustomButton
           title={showInactive ? "Show active" : "Show Inactive"}
-          disabled={loading.list}
-          loading={loading.list}
+          disabled={loading.query}
+          loading={loading.query}
           onPress={toggleShowInactive}
         />
       </View>
@@ -128,17 +90,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 12
-  },
-  workoutPlan: {
-    backgroundColor: "#CECECE",
-    padding: 24,
-    borderRadius: 5,
-    gap: 12,
-    flexDirection: "row"
-  },
-  workoutPlanName: {
-    fontSize: 20,
-    fontWeight: "bold"
   },
   showInactiveBtn: {
     marginTop: 12
