@@ -12,9 +12,9 @@ import { ioTsResolver } from "@hookform/resolvers/io-ts"
 import * as O from "fp-ts/Option"
 import { useStore } from "@/app/helpers/store"
 import { useWorkoutPlansDb } from "@/app/hooks/useWorkoutPlansDb"
-import { useEffect, useState } from "react"
 import { useSQLiteContext } from "expo-sqlite"
 import { ControlledSwitchInput } from "@/app/components/ControlledSwitchInput"
+import { pipe } from "fp-ts/function"
 
 export const WorkoutPlanForm = () => {
   const { workoutPlan } = useStore()
@@ -30,20 +30,32 @@ export const WorkoutPlanForm = () => {
     : CreateWorkoutPlanInput
   type FormType = Form<typeof isUpdate>
 
-  const resolver = (
-    isUpdate
-      ? ioTsResolver(UpdateWorkoutPlanCodec)
-      : ioTsResolver(CreateWorkoutPlanCodec)
-  ) as Resolver<FormType>
+  const formProps = pipe(
+    workoutPlan,
+    O.match(
+      () => ({
+        resolver: ioTsResolver(CreateWorkoutPlanCodec) as Resolver<FormType>,
+        defaultValues: {},
+        onSubmit: (data: FormType) =>
+          create(db, data as CreateWorkoutPlanInput),
+        title: "Create new workout plan"
+      }),
+      wp => ({
+        resolver: ioTsResolver(UpdateWorkoutPlanCodec) as Resolver<FormType>,
+        defaultValues: {
+          id: wp.id,
+          name: wp.name,
+          description: wp.description ?? undefined,
+          isActive: wp.isActive
+        },
+        onSubmit: (data: FormType) =>
+          update(db, data as UpdateWorkoutPlanInput),
+        title: `Update Workout Plan ${wp.name}`
+      })
+    )
+  )
 
-  const defaultValues = isUpdate
-    ? {
-        id: workoutPlan.value.id,
-        name: workoutPlan.value.name,
-        description: workoutPlan.value.description ?? undefined,
-        isActive: workoutPlan.value.isActive
-      }
-    : {}
+  const { resolver, defaultValues, onSubmit, title } = formProps
 
   const {
     control,
@@ -54,21 +66,6 @@ export const WorkoutPlanForm = () => {
     defaultValues,
     resolver
   })
-
-  const onSubmit = (data: FormType) =>
-    isUpdate
-      ? update(db, data as UpdateWorkoutPlanInput)
-      : create(db, data as CreateWorkoutPlanInput)
-
-  const title = isUpdate
-    ? `Update Workout ${defaultValues.name}`
-    : "Create new workout plan"
-
-  const [formLoading, setFormLoading] = useState(false)
-
-  useEffect(() => {
-    setFormLoading(isUpdate ? loading.update : loading.create)
-  }, [loading])
 
   return (
     <View>
@@ -95,8 +92,8 @@ export const WorkoutPlanForm = () => {
       </View>
       <CustomButton
         title="Submit"
-        disabled={!isDirty || !isValid || formLoading}
-        loading={formLoading}
+        disabled={!isDirty || !isValid || loading.mutation}
+        loading={loading.mutation}
         onPress={handleSubmit(onSubmit)}
       />
     </View>
