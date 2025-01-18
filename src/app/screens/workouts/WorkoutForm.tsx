@@ -55,7 +55,7 @@ export const WorkoutForm = () => {
             name: w.name
           },
           onSubmit: (data: FormType) => update(db, data as UpdateWorkoutInput),
-          title: `Update Workout ${w.name} for ${wp.name}`
+          title: `Update Workout ${w.name}`
         })
       )
     )
