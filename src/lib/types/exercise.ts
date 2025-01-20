@@ -6,8 +6,8 @@ import {
   NullFromEmptyString,
   UndefinedFromEmptyString
 } from "@/lib/types/branded/string"
-import { Nullable } from "./helpers/nullable"
-import { Optional } from "./helpers/optional"
+import { Nullable } from "@/lib/types/helpers/nullable"
+import { Optional } from "@/lib/types/helpers/optional"
 
 // Codecs
 
