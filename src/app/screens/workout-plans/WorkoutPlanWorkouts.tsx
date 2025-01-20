@@ -11,7 +11,8 @@ import { useEffect } from "react"
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native"
 
 export const WorkoutPlanWorkouts = () => {
-  const { workoutPlan, navigate, setWorkout, clearWorkout } = useStore()
+  const { workoutPlan, navigate, setWorkout, clearWorkout, fallbackToHome } =
+    useStore()
   const { list, loading, workouts, remove } = useWorkoutsDb()
   const db = useSQLiteContext()
 
@@ -59,7 +60,7 @@ export const WorkoutPlanWorkouts = () => {
   }
 
   const onNone = () => {
-    navigate("workoutPlans")
+    fallbackToHome()
 
     return <></>
   }

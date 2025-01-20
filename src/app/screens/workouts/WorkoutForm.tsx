@@ -18,7 +18,7 @@ import { WorkoutPlan } from "@/lib/types/workoutPlan"
 import { FormProps } from "@/app/types"
 
 export const WorkoutForm = () => {
-  const { workout, navigate, workoutPlan } = useStore()
+  const { workout, fallbackToHome, workoutPlan } = useStore()
 
   const Form = ({ wp }: { wp: WorkoutPlan }) => {
     const db = useSQLiteContext()
@@ -94,7 +94,7 @@ export const WorkoutForm = () => {
   }
 
   const onNone = () => {
-    navigate("workoutPlans")
+    fallbackToHome()
 
     return <></>
   }
