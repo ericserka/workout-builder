@@ -21,6 +21,7 @@ export const CustomButton = ({
 }: CustomButtonProps) => (
   <Pressable
     style={[styles.pressable, { backgroundColor }, disabled && styles.disabled]}
+    disabled={disabled}
     {...rest}
   >
     {loading ? (
