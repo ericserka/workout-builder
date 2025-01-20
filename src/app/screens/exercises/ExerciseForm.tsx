@@ -18,7 +18,7 @@ import { FormProps } from "@/app/types"
 import { ControlledPickerInput } from "@/app/components/ControlledPickerInput"
 
 export const ExerciseForm = () => {
-  const { exercise, navigate } = useStore()
+  const { exercise } = useStore()
 
   const db = useSQLiteContext()
 
