@@ -63,7 +63,7 @@ const removeNullablesAndUnzip = (
 ) =>
   pipe(
     record,
-    R.filterMap(O.fromNullable),
+    R.filter(value => value !== undefined),
     R.toEntries,
     A.map(normalizeRecord),
     A.unzip
