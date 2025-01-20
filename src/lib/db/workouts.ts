@@ -19,7 +19,7 @@ import {
   generateDeleteQuery
 } from "@/lib/db/helpers/query"
 import { DomainError } from "@/lib/types/errors"
-import { type PositiveInt } from "@/lib/types/branded/number"
+import type { PositiveInt } from "@/lib/types/branded/number"
 
 const WORKOUTS_TABLE = "workouts"
 
