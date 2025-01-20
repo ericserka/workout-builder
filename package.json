@@ -13,6 +13,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@hookform/resolvers": "^3.10.0",
+    "@react-native-picker/picker": "2.9.0",
     "expo": "~52.0.25",
     "expo-sqlite": "~15.0.6",
     "expo-status-bar": "~2.0.1",
