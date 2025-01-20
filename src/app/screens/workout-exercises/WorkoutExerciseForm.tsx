@@ -98,7 +98,7 @@ export const WorkoutExerciseForm = () => {
         exercises,
         A.head,
         O.match(
-          () => { },
+          () => {},
           e => {
             if (isCreate) {
               setValue("exerciseId", e.id)

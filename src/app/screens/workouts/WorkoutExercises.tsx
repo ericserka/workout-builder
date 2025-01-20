@@ -47,7 +47,9 @@ export const WorkoutExercises = () => {
           data={workoutExercises}
           keyExtractor={item => item.id.toString()}
           title={item => item.exerciseName}
-          subtitle={item => `${item.sets}x ${item.reps} ${item.weight ? `- ${item.weight}kg` : ""}`}
+          subtitle={item =>
+            `${item.sets}x ${item.reps} ${item.weight ? `- ${item.weight}kg` : ""}`
+          }
           actionsDisabled={loading.mutation}
           onCardPress={item => {
             setWorkoutExercise(item)
