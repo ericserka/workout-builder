@@ -1,34 +1,40 @@
 import * as t from "io-ts"
 import * as tt from "io-ts-types"
 import { Binary, PositiveInt } from "@/lib/types/branded/number"
-import { FriendlyNonEmptyString } from "@/lib/types/branded/string"
+import {
+  FriendlyNonEmptyString,
+  NullFromEmptyString,
+  UndefinedFromEmptyString
+} from "@/lib/types/branded/string"
+import { Optional } from "@/lib/types/helpers/optional"
+import { Nullable } from "@/lib/types/helpers/nullable"
 
 // Codecs
 
 export const WorkoutPlanCodec = t.type({
   id: PositiveInt,
   name: FriendlyNonEmptyString,
-  description: t.union([t.string, t.null]),
+  description: Nullable(t.string),
   isActive: tt.BooleanFromNumber
 })
 
 export const WorkoutPlanRowCodec = t.type({
   id: PositiveInt,
   name: FriendlyNonEmptyString,
-  description: t.union([t.string, t.null]),
+  description: Nullable(t.string),
   is_active: Binary
 })
 
 export const CreateWorkoutPlanCodec = t.type({
   name: FriendlyNonEmptyString,
-  description: t.union([t.string, t.undefined])
+  description: Optional(UndefinedFromEmptyString)
 })
 
 export const UpdateWorkoutPlanCodec = t.type({
   id: PositiveInt,
-  name: t.union([FriendlyNonEmptyString, t.undefined]),
-  description: t.union([t.string, t.undefined]),
-  isActive: t.union([t.boolean, t.undefined])
+  name: Optional(FriendlyNonEmptyString),
+  description: Optional(NullFromEmptyString),
+  isActive: Optional(t.boolean)
 })
 
 // Types
