@@ -6,6 +6,11 @@ export type Screen =
   | "workoutPlanWorkouts"
   | "workoutForm"
   | "workoutExercises"
+  | "workoutExercise"
+  | "workoutExerciseForm"
+  | "exercises"
+  | "exercise"
+  | "exerciseForm"
 
 export type Loading = {
   query: boolean
