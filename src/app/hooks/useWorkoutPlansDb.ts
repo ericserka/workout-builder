@@ -16,7 +16,7 @@ import * as A from "fp-ts/Array"
 import { Alert } from "react-native"
 import { useStore } from "@/app/helpers/store"
 import { create } from "zustand"
-import { type PositiveInt } from "@/lib/types/branded/number"
+import type { PositiveInt } from "@/lib/types/branded/number"
 import { alertDomainError } from "@/app/helpers/alert"
 import { Loading } from "@/app/types"
 
