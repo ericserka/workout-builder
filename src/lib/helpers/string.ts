@@ -7,3 +7,7 @@ export const camelToSnake = (str: string) =>
 export const isEmpty = (str: string) => pipe(str, S.trim, S.isEmpty)
 
 export const isNotEmpty = (str: string) => !isEmpty(str)
+
+export const isNotNumeric = (str: string) => pipe(str, Number, isNaN)
+
+export const isNumeric = (str: string) => !isNotNumeric(str)
