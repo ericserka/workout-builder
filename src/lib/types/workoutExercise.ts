@@ -1,15 +1,12 @@
 import * as t from "io-ts"
-import {
-  UndefinedOrPositiveFromString,
-  NullOrPositiveFromString,
-  Positive,
-  PositiveInt,
-  PositiveIntFromString
-} from "@/lib/types/branded/number"
+import { Positive, PositiveInt } from "@/lib/types/branded/number"
 import {
   MuscleGroup,
   NullFromEmptyString,
-  UndefinedFromEmptyString
+  UndefinedFromEmptyString,
+  UndefinedOrPositiveString,
+  NullOrPositiveString,
+  PositiveIntString
 } from "@/lib/types/branded/string"
 import { Nullable } from "@/lib/types/helpers/nullable"
 import { Optional } from "@/lib/types/helpers/optional"
@@ -41,9 +38,9 @@ export const WorkoutExerciseRowCodec = t.type({
 })
 
 export const CreateWorkoutExerciseCodec = t.type({
-  sets: PositiveIntFromString,
-  reps: PositiveIntFromString,
-  weight: Optional(UndefinedOrPositiveFromString),
+  sets: PositiveIntString,
+  reps: PositiveIntString,
+  weight: Optional(UndefinedOrPositiveString),
   notes: Optional(UndefinedFromEmptyString),
   exerciseId: PositiveInt,
   workoutId: PositiveInt
@@ -51,9 +48,9 @@ export const CreateWorkoutExerciseCodec = t.type({
 
 export const UpdateWorkoutExerciseCodec = t.type({
   id: PositiveInt,
-  sets: Optional(PositiveIntFromString),
-  reps: Optional(PositiveIntFromString),
-  weight: Optional(NullOrPositiveFromString),
+  sets: Optional(PositiveIntString),
+  reps: Optional(PositiveIntString),
+  weight: Optional(NullOrPositiveString),
   notes: Optional(NullFromEmptyString)
 })
 

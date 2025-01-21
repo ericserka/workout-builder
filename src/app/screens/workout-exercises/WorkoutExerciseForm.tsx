@@ -62,9 +62,9 @@ export const WorkoutExerciseForm = () => {
           resolver: ioTsResolver(UpdateWorkoutExerciseCodec),
           defaultValues: {
             id: we.id,
-            sets: we.sets,
-            reps: we.reps,
-            weight: we.weight ?? undefined,
+            sets: `${we.sets}`,
+            reps: `${we.reps}`,
+            weight: we.weight ? `${we.weight}` : undefined,
             notes: we.notes ?? undefined
           },
           onSubmit: (data: FormType) =>
@@ -98,7 +98,7 @@ export const WorkoutExerciseForm = () => {
         exercises,
         A.head,
         O.match(
-          () => {},
+          () => { },
           e => {
             if (isCreate) {
               setValue("exerciseId", e.id)
