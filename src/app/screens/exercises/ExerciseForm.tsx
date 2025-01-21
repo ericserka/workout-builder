@@ -24,6 +24,7 @@ export const ExerciseForm = () => {
 
   const { create, loading, update } = useExercisesDb()
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isUpdate = O.isSome(exercise)
 
   type Form<T extends boolean> = T extends true
