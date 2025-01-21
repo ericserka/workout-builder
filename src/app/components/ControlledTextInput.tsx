@@ -1,5 +1,7 @@
 import { Control, Controller, FieldValues, Path } from "react-hook-form"
-import { StyleSheet, Text, TextInput, TextInputProps, View } from "react-native"
+import { StyleSheet, TextInput, TextInputProps, View } from "react-native"
+import { FieldErrorMessage } from "@/app/components/FieldErrorMessage"
+import { containsError } from "@/app/helpers/form"
 
 interface ControlledTextInputProps<T extends FieldValues>
   extends TextInputProps {
@@ -19,13 +21,11 @@ export const ControlledTextInput = <T extends FieldValues>({
       <View style={styles.inputContainer}>
         <TextInput
           {...rest}
-          style={[styles.input, error?.message && styles.inputError]}
+          style={[styles.input, containsError(error) && styles.inputError]}
           onChangeText={onChange}
           value={value}
         />
-        {error?.message && (
-          <Text style={styles.errorText}>{error.message}</Text>
-        )}
+        <FieldErrorMessage error={error} />
       </View>
     )}
   />
