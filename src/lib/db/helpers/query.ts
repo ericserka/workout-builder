@@ -11,7 +11,7 @@ import * as A from "fp-ts/Array"
 import * as ArrayHelpers from "@/lib/helpers/array"
 import { SQLiteBindValue, SQLiteDatabase, SQLiteRunResult } from "expo-sqlite"
 import { DomainError } from "@/lib/types/errors"
-import { camelToSnake } from "@/lib/helpers/string"
+import * as StringHelpers from "@/lib/helpers/string"
 
 export const tryCatch = <T>(query: Promise<T>) =>
   TE.tryCatch(() => query, handleError)
@@ -54,7 +54,7 @@ const normalizeValue = (value: SQLiteBindValue) =>
 
 type RecordEntry = [string, SQLiteBindValue]
 const normalizeRecord = ([key, value]: RecordEntry): RecordEntry => [
-  camelToSnake(key),
+  StringHelpers.camelToSnake(key),
   normalizeValue(value)
 ]
 
