@@ -53,7 +53,7 @@ export const ExerciseForm = () => {
           id: e.id,
           name: e.name,
           muscleGroup: e.muscleGroup,
-          description: e.description
+          description: e.description ?? undefined
         },
         onSubmit: (data: FormType) => update(db, data as UpdateExerciseInput),
         title: `Update ${e.name}`
