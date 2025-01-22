@@ -24,6 +24,9 @@ export const Positive = new t.Type<number, number | string, unknown>(
         () =>
           pipe(
             t.number.validate(i, c),
+            E.mapLeft(() => [
+              { value: i, context: c, message: requiredErrorMessage }
+            ]),
             E.flatMap(n =>
               n > 0
                 ? E.right(n)
@@ -34,10 +37,7 @@ export const Positive = new t.Type<number, number | string, unknown>(
                       message: shouldBePositiveErrorMessage
                     }
                   ])
-            ),
-            E.mapLeft(() => [
-              { value: i, context: c, message: requiredErrorMessage }
-            ])
+            )
           ),
         () => {
           const n = Number(i)
@@ -70,6 +70,9 @@ export const Int = new t.Type<number, number | string, unknown>(
         () =>
           pipe(
             t.number.validate(i, c),
+            E.mapLeft(() => [
+              { value: i, context: c, message: requiredErrorMessage }
+            ]),
             E.flatMap(n =>
               Number.isInteger(n)
                 ? E.right(n)
@@ -80,10 +83,7 @@ export const Int = new t.Type<number, number | string, unknown>(
                       message: shouldBeIntegerErrorMessage
                     }
                   ])
-            ),
-            E.mapLeft(() => [
-              { value: i, context: c, message: requiredErrorMessage }
-            ])
+            )
           ),
         () => {
           const n = Number(i)
