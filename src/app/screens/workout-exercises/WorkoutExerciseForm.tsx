@@ -98,7 +98,7 @@ export const WorkoutExerciseForm = () => {
         exercises,
         A.head,
         O.match(
-          () => {},
+          () => { },
           e => {
             if (isCreate) {
               setValue("exerciseId", e.id)
@@ -131,6 +131,7 @@ export const WorkoutExerciseForm = () => {
             />
           )}
           <ControlledTextInput
+            label="Sets"
             placeholder="Sets"
             control={control}
             name="sets"
@@ -138,6 +139,7 @@ export const WorkoutExerciseForm = () => {
             keyboardType="number-pad"
           />
           <ControlledTextInput
+            label="Reps"
             placeholder="Reps"
             control={control}
             name="reps"
@@ -145,6 +147,7 @@ export const WorkoutExerciseForm = () => {
             keyboardType="number-pad"
           />
           <ControlledTextInput
+            label="Weight"
             placeholder="Weight"
             control={control}
             name="weight"
@@ -152,6 +155,7 @@ export const WorkoutExerciseForm = () => {
             keyboardType="number-pad"
           />
           <ControlledTextInput
+            label="Notes"
             placeholder="Notes"
             control={control}
             name="notes"
