@@ -1,15 +1,15 @@
 import { ControlledTextInput } from "@/app/components/ControlledTextInput"
 import { CustomButton } from "@/app/components/CustomButton"
 import {
-  CreateWorkoutExerciseCodec,
-  UpdateWorkoutExerciseCodec,
+  createWorkoutExerciseSchema,
+  updateWorkoutExerciseSchema,
   CreateWorkoutExerciseInput,
   UpdateWorkoutExerciseInput
 } from "@/lib/types/workoutExercise"
 import { Workout } from "@/lib/types/workout"
 import { useForm } from "react-hook-form"
 import { StyleSheet, Text, View } from "react-native"
-import { ioTsResolver } from "@hookform/resolvers/io-ts"
+import { zodResolver } from "@hookform/resolvers/zod"
 import * as O from "fp-ts/Option"
 import * as A from "fp-ts/Array"
 import { useStore } from "@/app/helpers/store"
@@ -51,7 +51,7 @@ export const WorkoutExerciseForm = () => {
           }
 
           return {
-            resolver: ioTsResolver(CreateWorkoutExerciseCodec),
+            resolver: zodResolver(createWorkoutExerciseSchema),
             defaultValues,
             onSubmit: (data: FormType) =>
               create(db, data as CreateWorkoutExerciseInput),
@@ -59,7 +59,7 @@ export const WorkoutExerciseForm = () => {
           }
         },
         we => ({
-          resolver: ioTsResolver(UpdateWorkoutExerciseCodec),
+          resolver: zodResolver(updateWorkoutExerciseSchema),
           defaultValues: {
             id: we.id,
             sets: `${we.sets}`,

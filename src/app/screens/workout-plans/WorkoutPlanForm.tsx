@@ -1,14 +1,14 @@
 import { ControlledTextInput } from "@/app/components/ControlledTextInput"
 import { CustomButton } from "@/app/components/CustomButton"
 import {
-  CreateWorkoutPlanCodec,
-  UpdateWorkoutPlanCodec,
+  createWorkoutPlanSchema,
+  updateWorkoutPlanSchema,
   CreateWorkoutPlanInput,
   UpdateWorkoutPlanInput
 } from "@/lib/types/workoutPlan"
 import { Resolver, useForm } from "react-hook-form"
 import { StyleSheet, Text, View } from "react-native"
-import { ioTsResolver } from "@hookform/resolvers/io-ts"
+import { zodResolver } from "@hookform/resolvers/zod"
 import * as O from "fp-ts/Option"
 import { useStore } from "@/app/helpers/store"
 import { useWorkoutPlansDb } from "@/app/hooks/useWorkoutPlansDb"
@@ -35,14 +35,14 @@ export const WorkoutPlanForm = () => {
     workoutPlan,
     O.match(
       () => ({
-        resolver: ioTsResolver(CreateWorkoutPlanCodec) as Resolver<FormType>,
+        resolver: zodResolver(createWorkoutPlanSchema) as Resolver<FormType>,
         defaultValues: {},
         onSubmit: (data: FormType) =>
           create(db, data as CreateWorkoutPlanInput),
         title: "Create new workout plan"
       }),
       wp => ({
-        resolver: ioTsResolver(UpdateWorkoutPlanCodec) as Resolver<FormType>,
+        resolver: zodResolver(updateWorkoutPlanSchema) as Resolver<FormType>,
         defaultValues: {
           id: wp.id,
           name: wp.name,

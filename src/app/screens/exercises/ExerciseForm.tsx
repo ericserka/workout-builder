@@ -1,14 +1,14 @@
 import { ControlledTextInput } from "@/app/components/ControlledTextInput"
 import { CustomButton } from "@/app/components/CustomButton"
 import {
-  CreateExerciseCodec,
-  UpdateExerciseCodec,
   CreateExerciseInput,
-  UpdateExerciseInput
+  UpdateExerciseInput,
+  createExerciseSchema,
+  updateExerciseSchema
 } from "@/lib/types/exercise"
 import { useForm } from "react-hook-form"
 import { StyleSheet, Text, View } from "react-native"
-import { ioTsResolver } from "@hookform/resolvers/io-ts"
+import { zodResolver } from "@hookform/resolvers/zod"
 import * as O from "fp-ts/Option"
 import { useStore } from "@/app/helpers/store"
 import { useExercisesDb } from "@/app/hooks/useExercisesDb"
@@ -41,14 +41,14 @@ export const ExerciseForm = () => {
         }
 
         return {
-          resolver: ioTsResolver(CreateExerciseCodec),
+          resolver: zodResolver(createExerciseSchema),
           defaultValues,
           onSubmit: (data: FormType) => create(db, data as CreateExerciseInput),
           title: `Create new exercise`
         }
       },
       e => ({
-        resolver: ioTsResolver(UpdateExerciseCodec),
+        resolver: zodResolver(updateExerciseSchema),
         defaultValues: {
           id: e.id,
           name: e.name,
@@ -102,6 +102,7 @@ export const ExerciseForm = () => {
             { label: "Glutes", value: "glutes" },
             { label: "Legs", value: "legs" },
             { label: "Shoulders", value: "shoulders" },
+            { label: "Traps", value: "traps" },
             { label: "Triceps", value: "triceps" }
           ]}
           label="Muscle Group"
