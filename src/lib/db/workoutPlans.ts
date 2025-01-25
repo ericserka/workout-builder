@@ -10,7 +10,6 @@ import {
   WorkoutPlanRow
 } from "@/lib/types/workoutPlan"
 import {
-  handleNotFoundFromNullable,
   tryCatch,
   generateInsertQuery,
   generateUpdateQuery,

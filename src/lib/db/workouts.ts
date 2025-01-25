@@ -10,7 +10,6 @@ import {
   WorkoutRow
 } from "@/lib/types/workout"
 import {
-  handleNotFoundFromNullable,
   tryCatch,
   generateInsertQuery,
   generateUpdateQuery,
