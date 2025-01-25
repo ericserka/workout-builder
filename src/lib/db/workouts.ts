@@ -82,17 +82,3 @@ export const listWorkoutPlanWorkouts: ListWorkoutPlanWorkouts =
       tryCatch,
       TE.map(A.map(mapRowToWorkout))
     )
-
-type FindWorkoutById = (
-  db: SQLiteDatabase
-) => (id: PositiveInt) => TE.TaskEither<DomainError, Workout>
-export const findWorkoutById: FindWorkoutById = db => id =>
-  pipe(
-    db.getFirstAsync<WorkoutRow>(
-      `SELECT * FROM ${WORKOUTS_TABLE} WHERE id = ?`,
-      [id]
-    ),
-    tryCatch,
-    handleNotFoundFromNullable(notFoundErrorMessage(id)),
-    TE.map(mapRowToWorkout)
-  )
