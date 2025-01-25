@@ -1,7 +1,6 @@
 import { FieldError } from "react-hook-form"
 import { StyleSheet, Text, View } from "react-native"
-import { parseErrors } from "@/app/helpers/form"
-import * as A from "fp-ts/Array"
+import * as O from "fp-ts/Option"
 import { pipe } from "fp-ts/function"
 
 interface FieldErrorMessageProps {
@@ -9,23 +8,15 @@ interface FieldErrorMessageProps {
 }
 
 export const FieldErrorMessage = ({ error }: FieldErrorMessageProps) => {
-  if (error) {
-    return (
-      <View>
-        {pipe(
-          error,
-          parseErrors,
-          A.map(e => (
-            <Text key={`${e.type}-${e.message}`} style={styles.errorText}>
-              {e.message}
-            </Text>
-          ))
-        )}
-      </View>
-    )
-  }
+  const onError = (e: FieldError) => (
+    <View>
+      <Text style={styles.errorText}>{e.message}</Text>
+    </View>
+  )
 
-  return <></>
+  const onNoError = () => <></>
+
+  return pipe(error, O.fromNullable, O.match(onNoError, onError))
 }
 
 const styles = StyleSheet.create({
