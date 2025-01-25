@@ -1,66 +1,66 @@
-import * as t from "io-ts"
-import { Positive, PositiveInt } from "@/lib/types/branded/number"
+import { positive, positiveInt } from "@/lib/types/branded/number"
 import {
-  MuscleGroup,
-  NullFromEmptyString,
-  UndefinedFromEmptyString,
-  UndefinedOrPositiveString,
-  NullOrPositiveString,
-  PositiveIntString
+  muscleGroup,
+  positiveIntString,
+  undefinedOrPositiveString,
+  undefinedFromEmptyString,
+  nullFromEmptyString,
+  nullOrPositiveString
 } from "@/lib/types/branded/string"
-import { Nullable } from "@/lib/types/helpers/nullable"
-import { Optional } from "@/lib/types/helpers/optional"
+import { z } from "zod"
 
-// Codecs
+// Schemas
 
-export const WorkoutExerciseCodec = t.type({
-  id: PositiveInt,
-  sets: PositiveInt,
-  reps: PositiveInt,
-  weight: Nullable(Positive),
-  notes: Nullable(t.string),
-  exerciseId: PositiveInt,
-  workoutId: PositiveInt,
-  exerciseName: t.string,
-  muscleGroup: MuscleGroup
+const baseWorkoutExercise = z.object({
+  id: positiveInt,
+  sets: positiveInt,
+  reps: positiveInt,
+  weight: positive.nullable(),
+  notes: z.string().nullable()
 })
 
-export const WorkoutExerciseRowCodec = t.type({
-  id: PositiveInt,
-  sets: PositiveInt,
-  reps: PositiveInt,
-  weight: Nullable(Positive),
-  notes: Nullable(t.string),
-  exercise_id: PositiveInt,
-  workout_id: PositiveInt,
-  exercise_name: t.string,
-  muscle_group: MuscleGroup
+const camelCaseFields = z.object({
+  exerciseId: positiveInt,
+  workoutId: positiveInt,
+  exerciseName: z.string(),
+  muscleGroup: muscleGroup
 })
 
-export const CreateWorkoutExerciseCodec = t.type({
-  sets: PositiveIntString,
-  reps: PositiveIntString,
-  weight: Optional(UndefinedOrPositiveString),
-  notes: Optional(UndefinedFromEmptyString),
-  exerciseId: PositiveInt,
-  workoutId: PositiveInt
+const snakeCaseFields = z.object({
+  exercise_id: positiveInt,
+  workout_id: positiveInt,
+  exercise_name: z.string(),
+  muscle_group: muscleGroup
 })
 
-export const UpdateWorkoutExerciseCodec = t.type({
-  id: PositiveInt,
-  sets: Optional(PositiveIntString),
-  reps: Optional(PositiveIntString),
-  weight: Optional(NullOrPositiveString),
-  notes: Optional(NullFromEmptyString)
+export const workoutExercise = baseWorkoutExercise.merge(camelCaseFields)
+
+export const workoutExerciseRow = baseWorkoutExercise.merge(snakeCaseFields)
+
+export const createWorkoutExerciseSchema = z.object({
+  sets: positiveIntString,
+  reps: positiveIntString,
+  weight: undefinedOrPositiveString.optional(),
+  notes: undefinedFromEmptyString.optional(),
+  exerciseId: positiveInt,
+  workoutId: positiveInt
+})
+
+export const updateWorkoutExerciseSchema = z.object({
+  id: positiveInt,
+  sets: positiveIntString.optional(),
+  reps: positiveIntString.optional(),
+  weight: nullOrPositiveString.optional(),
+  notes: nullFromEmptyString.optional()
 })
 
 // Types
 
-export type WorkoutExercise = t.TypeOf<typeof WorkoutExerciseCodec>
-export type WorkoutExerciseRow = t.TypeOf<typeof WorkoutExerciseRowCodec>
-export type CreateWorkoutExerciseInput = t.TypeOf<
-  typeof CreateWorkoutExerciseCodec
+export type WorkoutExercise = z.infer<typeof workoutExercise>
+export type WorkoutExerciseRow = z.infer<typeof workoutExerciseRow>
+export type CreateWorkoutExerciseInput = z.infer<
+  typeof createWorkoutExerciseSchema
 >
-export type UpdateWorkoutExerciseInput = t.TypeOf<
-  typeof UpdateWorkoutExerciseCodec
+export type UpdateWorkoutExerciseInput = z.infer<
+  typeof updateWorkoutExerciseSchema
 >

@@ -1,46 +1,48 @@
-import * as t from "io-ts"
-import { PositiveInt } from "@/lib/types/branded/number"
+import { positiveInt } from "@/lib/types/branded/number"
 import {
-  FriendlyNonEmptyString,
-  MuscleGroup,
-  NullFromEmptyString,
-  UndefinedFromEmptyString
+  muscleGroup,
+  nonEmptyString,
+  nullFromEmptyString,
+  undefinedFromEmptyString
 } from "@/lib/types/branded/string"
-import { Nullable } from "@/lib/types/helpers/nullable"
-import { Optional } from "@/lib/types/helpers/optional"
+import { z } from "zod"
 
-// Codecs
+// Schemas
 
-export const ExerciseCodec = t.type({
-  id: PositiveInt,
-  name: FriendlyNonEmptyString,
-  muscleGroup: MuscleGroup,
-  description: Nullable(t.string)
+const baseExercise = z.object({
+  id: positiveInt,
+  name: nonEmptyString,
+  description: z.string().nullable()
 })
 
-export const ExerciseRowCodec = t.type({
-  id: PositiveInt,
-  name: FriendlyNonEmptyString,
-  muscle_group: MuscleGroup,
-  description: Nullable(t.string)
+const camelCaseFields = z.object({
+  muscleGroup: muscleGroup
 })
 
-export const CreateExerciseCodec = t.type({
-  name: FriendlyNonEmptyString,
-  muscleGroup: MuscleGroup,
-  description: Optional(UndefinedFromEmptyString)
+const snakeCaseFields = z.object({
+  muscle_group: muscleGroup
 })
 
-export const UpdateExerciseCodec = t.type({
-  id: PositiveInt,
-  name: Optional(FriendlyNonEmptyString),
-  muscleGroup: Optional(MuscleGroup),
-  description: Optional(NullFromEmptyString)
+export const exercise = baseExercise.merge(camelCaseFields)
+
+export const exerciseRow = baseExercise.merge(snakeCaseFields)
+
+export const createExerciseSchema = z.object({
+  name: nonEmptyString,
+  muscleGroup: muscleGroup,
+  description: undefinedFromEmptyString.optional()
+})
+
+export const updateExerciseSchema = z.object({
+  id: positiveInt,
+  name: nonEmptyString.optional(),
+  muscleGroup: muscleGroup.optional(),
+  description: nullFromEmptyString.optional()
 })
 
 // Types
 
-export type Exercise = t.TypeOf<typeof ExerciseCodec>
-export type ExerciseRow = t.TypeOf<typeof ExerciseRowCodec>
-export type CreateExerciseInput = t.TypeOf<typeof CreateExerciseCodec>
-export type UpdateExerciseInput = t.TypeOf<typeof UpdateExerciseCodec>
+export type Exercise = z.infer<typeof exercise>
+export type ExerciseRow = z.infer<typeof exerciseRow>
+export type CreateExerciseInput = z.infer<typeof createExerciseSchema>
+export type UpdateExerciseInput = z.infer<typeof updateExerciseSchema>
