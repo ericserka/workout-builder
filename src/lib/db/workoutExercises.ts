@@ -116,7 +116,7 @@ export const getLatestWeightOfExercise: GetLatestWeightOfExercise =
       TE.map(weOrNull =>
         pipe(
           weOrNull,
-          O.flatMap(some => (some === null ? O.none : O.some(some)))
+          O.flatMap(O.fromNullable)
         )
       )
     )
