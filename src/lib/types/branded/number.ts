@@ -1,117 +1,18 @@
-import * as t from "io-ts"
-import * as E from "fp-ts/Either"
-import * as B from "fp-ts/boolean"
-import { pipe } from "fp-ts/function"
-import * as S from "fp-ts/string"
+import { z } from "zod"
 
-// Error messages
+// Schemas
 
-const shouldBePositiveErrorMessage = "Should be a positive number"
-const shouldBeNumberErrorMessage = "Should be a valid number"
-const shouldBeIntegerErrorMessage = "Should be an integer"
-const requiredErrorMessage = "Required"
+export const stringOrNumber = z.union([z.string(), z.number()])
 
-// Codecs
+const numberLike = z.coerce.number()
 
-export const Positive = new t.Type<number, number | string, unknown>(
-  "Positive",
-  (u): u is number => t.number.is(u) && u > 0,
-  (i, c) =>
-    pipe(
-      i,
-      S.isString,
-      B.match(
-        () =>
-          pipe(
-            t.number.validate(i, c),
-            E.mapLeft(() => [
-              { value: i, context: c, message: requiredErrorMessage }
-            ]),
-            E.flatMap(n =>
-              n > 0
-                ? E.right(n)
-                : E.left([
-                    {
-                      value: i,
-                      context: c,
-                      message: shouldBePositiveErrorMessage
-                    }
-                  ])
-            )
-          ),
-        () => {
-          const n = Number(i)
+export const positive = stringOrNumber.pipe(numberLike.positive())
 
-          return pipe(
-            n,
-            isNaN,
-            B.match(
-              () =>
-                n > 0
-                  ? t.success(n)
-                  : t.failure(i, c, shouldBePositiveErrorMessage),
-              () => t.failure(i, c, shouldBeNumberErrorMessage)
-            )
-          )
-        }
-      )
-    ),
-  t.identity
-)
+export const positiveInt = positive.pipe(z.number().int())
 
-export const Int = new t.Type<number, number | string, unknown>(
-  "Int",
-  (u): u is number => t.number.is(u) && Number.isInteger(u),
-  (i, c) =>
-    pipe(
-      i,
-      S.isString,
-      B.match(
-        () =>
-          pipe(
-            t.number.validate(i, c),
-            E.mapLeft(() => [
-              { value: i, context: c, message: requiredErrorMessage }
-            ]),
-            E.flatMap(n =>
-              Number.isInteger(n)
-                ? E.right(n)
-                : E.left([
-                    {
-                      value: i,
-                      context: c,
-                      message: shouldBeIntegerErrorMessage
-                    }
-                  ])
-            )
-          ),
-        () => {
-          const n = Number(i)
-
-          return pipe(
-            n,
-            isNaN,
-            B.match(
-              () =>
-                Number.isInteger(n)
-                  ? t.success(n)
-                  : t.failure(i, c, shouldBeIntegerErrorMessage),
-              () => t.failure(i, c, shouldBeNumberErrorMessage)
-            )
-          )
-        }
-      )
-    ),
-  t.identity
-)
-
-export const PositiveInt = t.intersection([Int, Positive])
-
-export const Binary = t.union([t.literal(0), t.literal(1)])
+export const binary = z.union([z.literal(0), z.literal(1)])
 
 // Types
 
-export type Positive = t.TypeOf<typeof Positive>
-export type Int = t.TypeOf<typeof Int>
-export type PositiveInt = t.TypeOf<typeof PositiveInt>
-export type Binary = t.TypeOf<typeof Binary>
+export type Positive = z.infer<typeof positive>
+export type PositiveInt = z.infer<typeof positiveInt>
