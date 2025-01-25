@@ -113,10 +113,5 @@ export const getLatestWeightOfExercise: GetLatestWeightOfExercise =
           O.map(we => we.weight)
         )
       ),
-      TE.map(weOrNull =>
-        pipe(
-          weOrNull,
-          O.flatMap(O.fromNullable)
-        )
-      )
+      TE.map(weOrNull => pipe(weOrNull, O.flatMap(O.fromNullable)))
     )

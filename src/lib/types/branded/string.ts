@@ -60,7 +60,7 @@ const superRefine: SuperRefine = (val, ctx) => {
       )
     ),
     O.match(
-      () => { },
+      () => {},
       issue => ctx.addIssue({ code: "custom", message: issue.message })
     )
   )
