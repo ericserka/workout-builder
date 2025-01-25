@@ -73,12 +73,14 @@ export const WorkoutPlanForm = () => {
       <Text style={styles.title}>{title}</Text>
       <View>
         <ControlledTextInput
+          label="Name"
           placeholder="Name"
           control={control}
           name="name"
           onBlur={() => trigger("name")}
         />
         <ControlledTextInput
+          label="Description"
           placeholder="Description"
           control={control}
           name="description"
