@@ -1,5 +1,6 @@
 import { FlatList, FlatListProps, StyleSheet } from "react-native"
 import { CardWithActions } from "@/app/components/CardWithActions"
+import React from "react"
 
 interface FlatListOfCardsProps<T> extends Omit<FlatListProps<T>, "renderItem"> {
   title: (item: T) => string
@@ -8,6 +9,7 @@ interface FlatListOfCardsProps<T> extends Omit<FlatListProps<T>, "renderItem"> {
   onCardPress: (item: T) => void
   onEditPress: (item: T) => void
   onDeletePress: (item: T) => void
+  extraIcon?: (item: T) => React.JSX.Element | null
 }
 
 export const FlatListOfCards = <T,>({
@@ -17,6 +19,7 @@ export const FlatListOfCards = <T,>({
   onCardPress,
   onEditPress,
   onDeletePress,
+  extraIcon,
   ...rest
 }: FlatListOfCardsProps<T>) => (
   <FlatList
@@ -31,6 +34,7 @@ export const FlatListOfCards = <T,>({
         onCardPress={onCardPress}
         onEditPress={onEditPress}
         onDeletePress={onDeletePress}
+        extraIcon={extraIcon}
       />
     )}
     contentContainerStyle={{ gap: 12 }}

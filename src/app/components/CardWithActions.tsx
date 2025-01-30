@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native"
 import { CustomButton } from "@/app/components/CustomButton"
+import React from "react"
 
 interface CardWithActionsProps<T> {
   title: (item: T) => string
@@ -9,6 +10,7 @@ interface CardWithActionsProps<T> {
   onCardPress: (item: T) => void
   onEditPress: (item: T) => void
   onDeletePress: (item: T) => void
+  extraIcon?: (item: T) => React.JSX.Element | null
 }
 
 export const CardWithActions = <T,>({
@@ -18,7 +20,8 @@ export const CardWithActions = <T,>({
   actionsDisabled,
   onCardPress,
   onEditPress,
-  onDeletePress
+  onDeletePress,
+  extraIcon
 }: CardWithActionsProps<T>) => (
   <Pressable
     style={styles.card}
@@ -27,7 +30,10 @@ export const CardWithActions = <T,>({
     }}
   >
     <View style={styles.cardInfo}>
-      <Text style={styles.cardTitle}>{title(item)}</Text>
+      <View style={styles.titleWithIcon}>
+        <Text style={styles.cardTitle}>{title(item)}</Text>
+        {extraIcon && extraIcon(item)}
+      </View>
       {subtitle && <Text>{subtitle(item)}</Text>}
     </View>
 
@@ -64,5 +70,10 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontWeight: "bold"
+  },
+  titleWithIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4
   }
 })

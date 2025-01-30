@@ -4,6 +4,7 @@ import { onDelete } from "@/app/helpers/alert"
 import { useStore } from "@/app/helpers/store"
 import { useWorkoutExercisesDb } from "@/app/hooks/useWorkoutExercisesDb"
 import { Workout } from "@/lib/types/workout"
+import { MaterialIcons } from "@expo/vector-icons"
 import { useSQLiteContext } from "expo-sqlite"
 import { pipe } from "fp-ts/function"
 import * as O from "fp-ts/Option"
@@ -62,6 +63,11 @@ export const WorkoutExercises = () => {
             setWorkoutExercise(item)
             navigate("workoutExerciseForm")
           }}
+          extraIcon={item =>
+            item.notes ? (
+              <MaterialIcons name="sticky-note-2" size={18} color="#000000b3" />
+            ) : null
+          }
         />
       </View>
     )
