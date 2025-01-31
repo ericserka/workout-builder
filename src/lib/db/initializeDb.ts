@@ -50,7 +50,7 @@ export const initializeDb = async (database: SQLiteDatabase) =>
   CREATE TRIGGER IF NOT EXISTS trg_after_insert_workouts AFTER INSERT ON workouts
   FOR EACH ROW WHEN NEW.sequence IS NULL BEGIN
     UPDATE workouts SET sequence = 
-    (SELECT (COALESCE(MAX(sequence), 0) + 1) FROM workouts WHERE workout_plan_id = NEW.workout_pan_id)
+    (SELECT (COALESCE(MAX(sequence), 0) + 1) FROM workouts WHERE workout_plan_id = NEW.workout_plan_id)
     WHERE id = NEW.id;
   END;
 
