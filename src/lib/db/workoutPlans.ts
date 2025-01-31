@@ -2,7 +2,6 @@ import { SQLiteDatabase, SQLiteRunResult } from "expo-sqlite"
 import { pipe } from "fp-ts/function"
 import * as TE from "fp-ts/TaskEither"
 import * as A from "fp-ts/Array"
-import * as R from "fp-ts/Record"
 import {
   CreateWorkoutPlanInput,
   UpdateWorkoutPlanInput,
@@ -46,7 +45,7 @@ export const updateWorkoutPlan: UpdateWorkoutPlan = db => input =>
   pipe(
     {
       table: WORKOUT_PLANS_TABLE,
-      values: R.deleteAt("id")(input),
+      values: { ...input, id: undefined },
       where: { id: input.id }
     },
     generateUpdateQuery,
