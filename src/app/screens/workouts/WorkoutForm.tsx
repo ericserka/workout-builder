@@ -10,12 +10,14 @@ import { useForm } from "react-hook-form"
 import { StyleSheet, Text, View } from "react-native"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as O from "fp-ts/Option"
+import * as A from "fp-ts/Array"
 import { useStore } from "@/app/helpers/store"
 import { useWorkoutsDb } from "@/app/hooks/useWorkoutsDb"
 import { useSQLiteContext } from "expo-sqlite"
 import { pipe } from "fp-ts/function"
 import { WorkoutPlan } from "@/lib/types/workoutPlan"
 import { FormProps } from "@/app/types"
+import { ControlledPickerInput } from "@/app/components/ControlledPickerInput"
 
 export const WorkoutForm = () => {
   const { workout, fallbackToHome, workoutPlan } = useStore()
@@ -23,9 +25,8 @@ export const WorkoutForm = () => {
   const Form = ({ wp }: { wp: WorkoutPlan }) => {
     const db = useSQLiteContext()
 
-    const { create, loading, update } = useWorkoutsDb()
+    const { create, loading, update, workouts } = useWorkoutsDb()
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const isUpdate = O.isSome(workout)
 
     type Form<T extends boolean> = T extends true
@@ -53,7 +54,8 @@ export const WorkoutForm = () => {
           resolver: zodResolver(updateWorkoutSchema),
           defaultValues: {
             id: w.id,
-            name: w.name
+            name: w.name,
+            sequence: w.sequence
           },
           onSubmit: (data: FormType) => update(db, data as UpdateWorkoutInput),
           title: `Update Workout ${w.name}`
@@ -73,6 +75,12 @@ export const WorkoutForm = () => {
       resolver
     })
 
+    const defineSequencePickerItems = () =>
+      pipe(
+        workouts,
+        A.map(w => ({ label: `${w.sequence}`, value: w.sequence }))
+      )
+
     return (
       <View>
         <Text style={styles.title}>{title}</Text>
@@ -84,6 +92,14 @@ export const WorkoutForm = () => {
             name="name"
             onBlur={() => trigger("name")}
           />
+          {isUpdate && (
+            <ControlledPickerInput
+              control={control}
+              name="sequence"
+              items={defineSequencePickerItems()}
+              label="Sequence"
+            />
+          )}
         </View>
         <CustomButton
           title="Submit"

@@ -30,7 +30,8 @@ export const WorkoutExerciseForm = () => {
     const {
       create,
       loading: workoutExercisesLoading,
-      update
+      update,
+      workoutExercises
     } = useWorkoutExercisesDb()
 
     const { list: listExercises, exercises } = useExercisesDb()
@@ -62,6 +63,7 @@ export const WorkoutExerciseForm = () => {
           resolver: zodResolver(updateWorkoutExerciseSchema),
           defaultValues: {
             id: we.id,
+            sequence: we.sequence,
             sets: `${we.sets}`,
             reps: `${we.reps}`,
             weight: we.weight ? `${we.weight}` : undefined,
@@ -107,6 +109,12 @@ export const WorkoutExerciseForm = () => {
         )
       )
     }, [exercises])
+
+    const defineSequencePickerItems = () =>
+      pipe(
+        workoutExercises,
+        A.map(we => ({ label: `${we.sequence}`, value: we.sequence }))
+      )
 
     return (
       <View>
@@ -161,6 +169,14 @@ export const WorkoutExerciseForm = () => {
             name="notes"
             onBlur={() => trigger("notes")}
           />
+          {!isCreate && (
+            <ControlledPickerInput
+              control={control}
+              name="sequence"
+              items={defineSequencePickerItems()}
+              label="Sequence"
+            />
+          )}
         </View>
         <CustomButton
           title="Submit"
