@@ -6,7 +6,8 @@ import { z } from "zod"
 
 const baseWorkout = z.object({
   id: positiveInt,
-  name: nonEmptyString
+  name: nonEmptyString,
+  sequence: positiveInt
 })
 
 const camelCaseFields = z.object({
@@ -28,7 +29,8 @@ export const createWorkoutSchema = z.object({
 
 export const updateWorkoutSchema = z.object({
   id: positiveInt,
-  name: nonEmptyString.optional()
+  name: nonEmptyString.optional(),
+  sequence: positiveInt.optional()
 })
 
 // Types
