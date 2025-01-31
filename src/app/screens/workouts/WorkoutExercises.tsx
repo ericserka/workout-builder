@@ -57,7 +57,7 @@ export const WorkoutExercises = () => {
             navigate("workoutExercise")
           }}
           onDeletePress={item => {
-            onDelete("Delete Exercise", () => remove(db, item.id))
+            onDelete("Delete Exercise", () => remove(db, item))
           }}
           onEditPress={item => {
             setWorkoutExercise(item)

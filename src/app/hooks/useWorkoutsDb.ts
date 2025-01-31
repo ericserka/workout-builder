@@ -12,7 +12,6 @@ import {
 import { SQLiteDatabase } from "expo-sqlite"
 import { pipe } from "fp-ts/function"
 import * as TE from "fp-ts/TaskEither"
-import * as A from "fp-ts/Array"
 import { Alert } from "react-native"
 import { useStore } from "@/app/helpers/store"
 import { create } from "zustand"
@@ -24,7 +23,7 @@ interface UseWorkoutsDb {
   create: (db: SQLiteDatabase, input: CreateWorkoutInput) => void
   update: (db: SQLiteDatabase, input: UpdateWorkoutInput) => void
   list: (db: SQLiteDatabase, workoutPlanId: PositiveInt) => void
-  remove: (db: SQLiteDatabase, id: PositiveInt) => void
+  remove: (db: SQLiteDatabase, workout: Workout) => void
   loading: Loading
   workouts: Workout[]
 }
@@ -39,14 +38,6 @@ export const useWorkoutsDb = create<UseWorkoutsDb>(set => {
   const toggleMutationLoading = () =>
     set(state => ({
       loading: { ...state.loading, mutation: !state.loading.mutation }
-    }))
-
-  const deleteIdFromStore = (id: PositiveInt) =>
-    set(state => ({
-      workouts: pipe(
-        state.workouts,
-        A.filter(w => w.id !== id)
-      )
     }))
 
   return {
@@ -111,19 +102,22 @@ export const useWorkoutsDb = create<UseWorkoutsDb>(set => {
         )
       )()
     },
-    remove: (db, id) => {
+    remove: (db, workout) => {
       toggleMutationLoading()
 
       pipe(
-        id,
+        workout.id,
         deleteWorkout(db),
+        TE.flatMap(() =>
+          pipe(workout.workoutPlanId, listWorkoutPlanWorkouts(db))
+        ),
         TE.match(
           error => {
             alertDomainError(error)
             toggleMutationLoading()
           },
-          () => {
-            deleteIdFromStore(id)
+          workouts => {
+            set({ workouts })
             Alert.alert("Workout deleted!")
             toggleMutationLoading()
           }
