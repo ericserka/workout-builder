@@ -61,6 +61,12 @@ export const initializeDb = async (database: SQLiteDatabase) =>
     AND sequence < OLD.sequence
     AND workout_id = NEW.workout_id
     AND id != NEW.id;
+    
+    UPDATE workout_exercises SET sequence = sequence - 1
+    WHERE sequence <= NEW.sequence
+    AND sequence > OLD.sequence
+    AND workout_id = NEW.workout_id
+    AND id != NEW.id;
   END;
 
   CREATE TRIGGER IF NOT EXISTS trg_after_update_sequence_workouts AFTER UPDATE OF sequence ON workouts
@@ -68,6 +74,12 @@ export const initializeDb = async (database: SQLiteDatabase) =>
     UPDATE workouts SET sequence = sequence + 1
     WHERE sequence >= NEW.sequence
     AND sequence < OLD.sequence
+    AND workout_plan_id = NEW.workout_plan_id
+    AND id != NEW.id;
+
+    UPDATE workouts SET sequence = sequence - 1
+    WHERE sequence <= NEW.sequence
+    AND sequence > OLD.sequence
     AND workout_plan_id = NEW.workout_plan_id
     AND id != NEW.id;
   END;
