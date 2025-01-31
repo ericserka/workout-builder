@@ -16,7 +16,8 @@ const baseWorkoutExercise = z.object({
   sets: positiveInt,
   reps: positiveInt,
   weight: positive.nullable(),
-  notes: z.string().nullable()
+  notes: z.string().nullable(),
+  sequence: positiveInt
 })
 
 const camelCaseFields = z.object({
@@ -51,7 +52,8 @@ export const updateWorkoutExerciseSchema = z.object({
   sets: positiveIntString.optional(),
   reps: positiveIntString.optional(),
   weight: nullOrPositiveString.optional(),
-  notes: nullFromEmptyString.optional()
+  notes: nullFromEmptyString.optional(),
+  sequence: positiveInt.optional()
 })
 
 // Types
