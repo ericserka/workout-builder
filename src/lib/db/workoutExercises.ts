@@ -2,7 +2,6 @@ import { SQLiteDatabase, SQLiteRunResult } from "expo-sqlite"
 import { pipe } from "fp-ts/function"
 import * as TE from "fp-ts/TaskEither"
 import * as A from "fp-ts/Array"
-import * as R from "fp-ts/Record"
 import * as O from "fp-ts/Option"
 import {
   CreateWorkoutExerciseInput,
@@ -47,7 +46,7 @@ export const updateWorkoutExercise: UpdateWorkoutExercise = db => input =>
   pipe(
     {
       table: WORKOUT_EXERCISES_TABLE,
-      values: R.deleteAt("id")(input),
+      values: { ...input, id: undefined },
       where: { id: input.id }
     },
     generateUpdateQuery,
@@ -73,6 +72,7 @@ const mapRowToWorkoutExercise: MapRowToWorkoutExercise = row => ({
   reps: row.reps,
   weight: row.weight,
   notes: row.notes,
+  sequence: row.sequence,
   exerciseId: row.exercise_id,
   workoutId: row.workout_id,
   exerciseName: row.exercise_name,
@@ -85,7 +85,7 @@ type ListWorkoutExercises = (
 export const listWorkoutExercises: ListWorkoutExercises = db => workoutId => {
   const query = `
 SELECT we.*, e.name as exercise_name, e.muscle_group FROM ${WORKOUT_EXERCISES_TABLE} we
-INNER JOIN exercises e ON we.exercise_id = e.id WHERE we.workout_id = ? ORDER BY we.id ASC   
+INNER JOIN exercises e ON we.exercise_id = e.id WHERE we.workout_id = ? ORDER BY we.sequence ASC   
 `
 
   return pipe(

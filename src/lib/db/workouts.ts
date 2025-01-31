@@ -64,6 +64,7 @@ type MapRowToWorkout = (row: WorkoutRow) => Workout
 const mapRowToWorkout: MapRowToWorkout = row => ({
   id: row.id,
   name: row.name,
+  sequence: row.sequence,
   workoutPlanId: row.workout_plan_id
 })
 
@@ -74,7 +75,7 @@ export const listWorkoutPlanWorkouts: ListWorkoutPlanWorkouts =
   db => workoutPlanId =>
     pipe(
       db.getAllAsync<WorkoutRow>(
-        `SELECT * FROM ${WORKOUTS_TABLE} WHERE workout_plan_id = ? ORDER BY id ASC`,
+        `SELECT * FROM ${WORKOUTS_TABLE} WHERE workout_plan_id = ? ORDER BY sequence ASC`,
         [workoutPlanId]
       ),
       tryCatch,
