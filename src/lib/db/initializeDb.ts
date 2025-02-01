@@ -55,7 +55,7 @@ export const initializeDb = async (database: SQLiteDatabase) =>
   END;
 
   CREATE TRIGGER IF NOT EXISTS trg_after_update_sequence_workout_exercises AFTER UPDATE OF sequence ON workout_exercises
-  FOR EACH ROW BEGIN
+  FOR EACH ROW WHEN OLD.sequence != NEW.sequence BEGIN
     UPDATE workout_exercises SET sequence = sequence + 1
     WHERE sequence >= NEW.sequence
     AND sequence < OLD.sequence
@@ -70,7 +70,7 @@ export const initializeDb = async (database: SQLiteDatabase) =>
   END;
 
   CREATE TRIGGER IF NOT EXISTS trg_after_update_sequence_workouts AFTER UPDATE OF sequence ON workouts
-  FOR EACH ROW BEGIN
+  FOR EACH ROW WHEN OLD.sequence != NEW.sequence BEGIN
     UPDATE workouts SET sequence = sequence + 1
     WHERE sequence >= NEW.sequence
     AND sequence < OLD.sequence
