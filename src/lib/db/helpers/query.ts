@@ -8,6 +8,8 @@ import { pipe } from "fp-ts/function"
 import * as O from "fp-ts/Option"
 import * as R from "fp-ts/Record"
 import * as A from "fp-ts/Array"
+import * as B from "fp-ts/boolean"
+import * as N from "fp-ts/number"
 import * as ArrayHelpers from "@/lib/helpers/array"
 import { SQLiteBindValue, SQLiteDatabase, SQLiteRunResult } from "expo-sqlite"
 import { DomainError } from "@/lib/types/errors"
@@ -39,12 +41,17 @@ export const handleNotFoundFromNullable = <T>(message: string) =>
   )
 
 export const handleNotFoundFromResult = (message: string) =>
-  TE.flatMap((result: SQLiteRunResult) => {
-    if (result.changes === 0) {
-      return pipe(message, notFoundError, TE.left)
-    }
-    return TE.right(result)
-  })
+  TE.flatMap(
+    (result: SQLiteRunResult): TE.TaskEither<DomainError, SQLiteRunResult> =>
+      pipe(
+        [result.changes, 0],
+        ([x, y]) => N.Eq.equals(x, y),
+        B.match(
+          () => TE.right(result),
+          () => pipe(message, notFoundError, TE.left)
+        )
+      )
+  )
 
 const generateUnnamedParams = (length: number): string =>
   pipe(A.replicate(length, "?"), ArrayHelpers.join(", "))

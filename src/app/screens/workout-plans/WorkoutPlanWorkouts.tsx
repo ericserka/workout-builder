@@ -5,8 +5,9 @@ import { useStore } from "@/app/helpers/store"
 import { useWorkoutsDb } from "@/app/hooks/useWorkoutsDb"
 import { WorkoutPlan } from "@/lib/types/workoutPlan"
 import { useSQLiteContext } from "expo-sqlite"
-import { pipe } from "fp-ts/function"
+import { constVoid, pipe } from "fp-ts/function"
 import * as O from "fp-ts/Option"
+import * as B from "fp-ts/boolean"
 import { useEffect } from "react"
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native"
 
@@ -17,47 +18,49 @@ export const WorkoutPlanWorkouts = () => {
   const db = useSQLiteContext()
 
   useEffect(() => {
-    if (O.isSome(workoutPlan)) {
-      list(db, workoutPlan.value.id)
-    }
+    pipe(
+      workoutPlan,
+      O.match(constVoid, wp => list(db, wp.id))
+    )
   }, [workoutPlan])
 
-  const SomeWorkoutPlan = ({ wp }: { wp: WorkoutPlan }) => {
-    if (loading.query) {
-      return <ActivityIndicator size="large" />
-    }
-
-    return (
-      <View>
-        <CustomButton
-          title={"Create new workout for this plan"}
-          disabled={loading.mutation}
-          onPress={() => {
-            clearWorkout()
-            navigate("workoutForm")
-          }}
-        />
-        <Text style={styles.title}>{`${wp.name} workouts`}</Text>
-        <FlatListOfCards
-          data={workouts}
-          keyExtractor={item => item.id.toString()}
-          title={item => item.name}
-          actionsDisabled={loading.mutation}
-          onCardPress={item => {
-            setWorkout(item)
-            navigate("workoutExercises")
-          }}
-          onDeletePress={item => {
-            onDelete("Delete Workout", () => remove(db, item))
-          }}
-          onEditPress={item => {
-            setWorkout(item)
-            navigate("workoutForm")
-          }}
-        />
-      </View>
+  const SomeWorkoutPlan = ({ wp }: { wp: WorkoutPlan }) =>
+    pipe(
+      loading.query,
+      B.match(
+        () => (
+          <View>
+            <CustomButton
+              title={"Create new workout for this plan"}
+              disabled={loading.mutation}
+              onPress={() => {
+                clearWorkout()
+                navigate("workoutForm")
+              }}
+            />
+            <Text style={styles.title}>{`${wp.name} workouts`}</Text>
+            <FlatListOfCards
+              data={workouts}
+              keyExtractor={item => item.id.toString()}
+              title={item => item.name}
+              actionsDisabled={loading.mutation}
+              onCardPress={item => {
+                setWorkout(item)
+                navigate("workoutExercises")
+              }}
+              onDeletePress={item => {
+                onDelete("Delete Workout", () => remove(db, item))
+              }}
+              onEditPress={item => {
+                setWorkout(item)
+                navigate("workoutForm")
+              }}
+            />
+          </View>
+        ),
+        () => <ActivityIndicator size="large" />
+      )
     )
-  }
 
   const onNone = () => {
     fallbackToHome()
@@ -65,9 +68,8 @@ export const WorkoutPlanWorkouts = () => {
     return <></>
   }
 
-  const onSome = (wp: WorkoutPlan) => {
-    return <SomeWorkoutPlan wp={wp} />
-  }
+  const onSome = (wp: WorkoutPlan) => <SomeWorkoutPlan wp={wp} />
+
 
   return pipe(workoutPlan, O.match(onNone, onSome))
 }

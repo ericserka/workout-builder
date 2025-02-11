@@ -15,7 +15,8 @@ import * as A from "fp-ts/Array"
 import { useStore } from "@/app/helpers/store"
 import { useWorkoutExercisesDb } from "@/app/hooks/useWorkoutExercisesDb"
 import { useSQLiteContext } from "expo-sqlite"
-import { pipe } from "fp-ts/function"
+import { constVoid, pipe } from "fp-ts/function"
+import * as B from "fp-ts/boolean"
 import { FormProps } from "@/app/types"
 import { useEffect } from "react"
 import { ControlledPickerInput } from "@/app/components/ControlledPickerInput"
@@ -90,22 +91,21 @@ export const WorkoutExerciseForm = () => {
     })
 
     useEffect(() => {
-      if (isCreate) {
-        listExercises(db)
-      }
+      pipe(
+        isCreate,
+        B.match(constVoid, () => listExercises(db))
+      )
     }, [])
 
     useEffect(() => {
       pipe(
         exercises,
         A.head,
-        O.match(
-          () => {},
-          e => {
-            if (isCreate) {
-              setValue("exerciseId", e.id)
-            }
-          }
+        O.map(e =>
+          pipe(
+            isCreate,
+            B.match(constVoid, () => setValue("exerciseId", e.id))
+          )
         )
       )
     }, [exercises])

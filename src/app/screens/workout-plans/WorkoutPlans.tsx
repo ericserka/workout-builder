@@ -7,6 +7,8 @@ import { WorkoutPlan } from "@/lib/types/workoutPlan"
 import { CustomButton } from "@/app/components/CustomButton"
 import { onDelete } from "@/app/helpers/alert"
 import { FlatListOfCards } from "@/app/components/FlatListOfCards"
+import { pipe } from "fp-ts/function"
+import * as B from "fp-ts/boolean"
 
 export const WorkoutPlans = () => {
   const { list, loading, active, remove, inactive } = useWorkoutPlansDb()
@@ -43,44 +45,46 @@ export const WorkoutPlans = () => {
     />
   )
 
-  if (loading.query) {
-    return <ActivityIndicator size="large" />
-  }
-
-  return (
-    <View>
-      <CustomButton
-        title={"Create new workout plan"}
-        disabled={loading.mutation}
-        onPress={() => {
-          clearWorkoutPlan()
-          navigate("workoutPlanForm")
-        }}
-      />
-
-      <View style={styles.showInactiveBtn}>
-        <CustomButton
-          title={showInactive ? "Show active" : "Show Inactive"}
-          disabled={loading.query}
-          loading={loading.query}
-          onPress={toggleShowInactive}
-        />
-      </View>
-
-      {!showInactive && (
+  return pipe(
+    loading.query,
+    B.match(
+      () => (
         <View>
-          <Text style={styles.title}>Active Workout Plans</Text>
-          <WorkoutPlanFlatList data={active} />
-        </View>
-      )}
+          <CustomButton
+            title={"Create new workout plan"}
+            disabled={loading.mutation}
+            onPress={() => {
+              clearWorkoutPlan()
+              navigate("workoutPlanForm")
+            }}
+          />
 
-      {showInactive && (
-        <View>
-          <Text style={styles.title}>Inactive Workout Plans</Text>
-          <WorkoutPlanFlatList data={inactive} />
+          <View style={styles.showInactiveBtn}>
+            <CustomButton
+              title={showInactive ? "Show active" : "Show Inactive"}
+              disabled={loading.query}
+              loading={loading.query}
+              onPress={toggleShowInactive}
+            />
+          </View>
+
+          {!showInactive && (
+            <View>
+              <Text style={styles.title}>Active Workout Plans</Text>
+              <WorkoutPlanFlatList data={active} />
+            </View>
+          )}
+
+          {showInactive && (
+            <View>
+              <Text style={styles.title}>Inactive Workout Plans</Text>
+              <WorkoutPlanFlatList data={inactive} />
+            </View>
+          )}
         </View>
-      )}
-    </View>
+      ),
+      () => <ActivityIndicator size="large" />
+    )
   )
 }
 
