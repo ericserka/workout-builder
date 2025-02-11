@@ -70,7 +70,6 @@ export const WorkoutPlanWorkouts = () => {
 
   const onSome = (wp: WorkoutPlan) => <SomeWorkoutPlan wp={wp} />
 
-
   return pipe(workoutPlan, O.match(onNone, onSome))
 }
 
