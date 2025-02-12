@@ -3,7 +3,7 @@ import {
   positiveInt,
   stringOrNumber
 } from "@/lib/types/branded/number"
-import { pipe } from "fp-ts/function"
+import { pipe, constVoid } from "fp-ts/function"
 import * as O from "fp-ts/Option"
 import { z } from "zod"
 
@@ -59,9 +59,8 @@ const superRefine: SuperRefine = (val, ctx) => {
         res.success ? O.none : O.some(res.error.issues[0])
       )
     ),
-    O.match(
-      () => {},
-      issue => ctx.addIssue({ code: "custom", message: issue.message })
+    O.match(constVoid, issue =>
+      ctx.addIssue({ code: "custom", message: issue.message })
     )
   )
 }
